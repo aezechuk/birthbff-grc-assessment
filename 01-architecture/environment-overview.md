@@ -25,7 +25,8 @@ The platform allows users to:
 - IAM (user roles and access control)
 - AWS CloudTrail (logging and audit trail)
 - AWS CloudWatch (monitoring and alerts)
-- EC2 or Elastic Beanstalk (application hosting)
+- Amazon EC2 (web/API application layer)
+- Amazon RDS MySQL (relational database used to store user account metadata, saved chat history metadata, and birth plan records)
 - RDS or DynamoDB (data storage)
 
 ## Security Considerations
@@ -34,3 +35,18 @@ This assessment focuses on:
 - Data protection and classification
 - Logging and monitoring
 - Risk identification and remediation
+
+## Compliance Scope
+
+The BirthBFF platform processes user-generated content that may include
+health-related and potentially sensitive personal information. For the
+purposes of this assessment, this data is treated as Protected Health
+Information (PHI)-like data to evaluate security and privacy risks.
+
+Controls are assessed against:
+- SP 800-53 Rev. 5
+- Security Rule (45 CFR Part 164)
+- AWS Foundations Benchmark v1.4
+
+This is a pre-production security and GRC assessment and does not represent
+a certified HIPAA-compliant environment. The assessment focuses on identifying gaps and risks relative to these frameworks, not achieving full compliance.

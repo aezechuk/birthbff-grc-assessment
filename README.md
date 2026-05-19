@@ -1,10 +1,18 @@
 # BirthBFF Cloud Security & GRC Assessment
 
-**Simulated AWS cloud security assessment and GRC audit for a HIPAA-regulated AI-powered childbirth education platform.**
+**Simulated AWS cloud security assessment for a HIPAA-aligned AI-powered childbirth education platform handling sensitive maternal health data.**
 
-In this project I step into the role of a Cloud Security (GRC) Analyst at BirthBFF, a planned AI-powered childbirth education application that processes sensitive maternal health data. I deploy and intentionally misconfigure an AWS environment to simulate a neglected production system, then conduct a structured security assessment mapped to HIPAA, NIST SP 800-53 Rev. 5, and CIS AWS Foundations Benchmark v1.4.
+In this project I step into the role of a Cloud Security (GRC) Analyst at BirthBFF, a planned AI-powered childbirth education application that processes sensitive maternal health data. I deploy and intentionally misconfigure an AWS environment tosimulate a neglected cloud environment with production-like security risks, then conduct a structured security assessment mapped to HIPAA, NIST SP 800-53 Rev. 5, and CIS AWS Foundations Benchmark v1.4.
 
 The environment includes IAM users with excessive privileges, a publicly accessible S3 bucket containing mock PHI-like patient data, overly permissive security groups, missing network segmentation, and gaps in logging and monitoring coverage. Each misconfiguration is documented as a formal audit finding with framework mappings, evidence screenshots, and remediation guidance.
+
+## Live Report
+
+View the interactive executive security report: [BirthBFF Monthly Security Report](https://birthbff-security-report.vercel.app/)
+
+## Disclaimer
+
+This is a simulated security assessment created for educational and portfolio purposes. No real patient data, production systems, or live healthcare environment were used. All sensitive data shown in screenshots or reports is mock data.
 
 ---
 
@@ -18,6 +26,19 @@ The environment includes IAM users with excessive privileges, a publicly accessi
 | Data Classification | Reproductive health data, patient intake, behavioral data |
 | Regulatory Scope | HIPAA Security Rule, NIST SP 800-53 Rev. 5, CIS AWS Foundations Benchmark v1.4 |
 | Total Findings | 11 (2 Critical, 7 High, 2 Medium) |
+
+---
+
+## Project Outcomes
+
+This assessment produced:
+
+- 11 documented cloud security findings across IAM, storage, networking, compute, and monitoring domains
+- A prioritized risk register using likelihood × impact scoring
+- Framework mappings to HIPAA Security Rule, NIST SP 800-53 Rev. 5, and CIS AWS Foundations Benchmark v1.4
+- Evidence screenshots supporting each finding
+- Remediation guidance focused on least privilege, network segmentation, encryption governance, monitoring, and data classification
+- An executive-style interactive security report deployed as a static website
 
 ---
 
@@ -81,7 +102,7 @@ In this phase I reviewed S3 bucket configuration, access controls, encryption se
 
 **What I found:**
 
-The patient documents bucket had Block Public Access disabled and a bucket policy granting s3:GetObject to Principal: * — all unauthenticated users. A mock patient intake CSV containing names, dates of birth, due dates, and clinical conditions was confirmed accessible via unauthenticated HTTP request, constituting an unauthorized disclosure of PHI under HIPAA. The bucket also used SSE-S3 (AWS-managed keys) rather than a customer-managed KMS key, meaning the organization had no visibility into key access or decrypt operations against patient data.
+The mock patient documents bucket had Block Public Access disabled and a bucket policy granting s3:GetObject to Principal: * — all unauthenticated users. A mock patient intake CSV containing names, dates of birth, due dates, and clinical conditions was confirmed accessible via unauthenticated HTTP request, constituting an unauthorized disclosure of PHI-like data, representing a HIPAA-impacting scenario in a regulated environment. The bucket also used SSE-S3 (AWS-managed keys) rather than a customer-managed KMS key, meaning the organization had no visibility into key access or decrypt operations against patient data.
 
 **Findings:** F-004 (Critical), F-010 (Medium)
 
@@ -105,7 +126,7 @@ In this phase I reviewed the EC2 instance configuration, attached security group
 
 **What I found:**
 
-The application server was deployed in the public subnet with a public IP address and a security group permitting unrestricted inbound access on ports 22, 80, and 3000 from 0.0.0.0/0. The instance did have an IAM instance profile attached — a compliant control eliminating the need for long-term credentials on the instance. The overly permissive security group rules represented the primary finding for this tier.
+The application server security group permitted unrestricted inbound SSH access from 0.0.0.0/0. Additional application ports were also publicly reachable as part of the simulated deployment.. The instance did have an IAM instance profile attached — a compliant control eliminating the need for long-term credentials on the instance. The overly permissive security group rules represented the primary finding for this tier.
 
 **Findings:** F-006 (High — shared with network assessment)
 
@@ -159,7 +180,7 @@ CloudTrail was configured as a multi-region trail capturing management events wi
 
 ## Risk Register
 
-Risks are scored using a 5x5 likelihood and impact matrix. 6 Critical risks were identified requiring immediate remediation, with the publicly accessible S3 bucket containing PHI-like data ranked highest priority.
+Risks are scored using a 5x5 likelihood and impact matrix. 6 Critical risks were identified requiring immediate remediation, with the publicly accessible S3 bucket containing PHI-like data ranked highest priority. Risk levels may differ from finding severity because risks are scored separately using likelihood × impact based on the threat scenario.
 
 [View Risk Register](risk-register.md)
 

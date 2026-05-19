@@ -16,7 +16,7 @@
 | F-002 | Developer user excessive permissions and unused access keys | High | Open |
 | F-003 | No MFA enforcement for any IAM user | High | Open |
 | F-004 | S3 bucket publicly readable containing PHI-like data | Critical | Open |
-| F-005 | No private subnet — all resources in public network tier | High | Open |
+| F-005 | No network segmentation — all resources in public network tier | High | Open |
 | F-006 | EC2 security group allows unrestricted SSH access | High | Open |
 | F-007 | Database security group permits unrestricted MySQL access | High | Open |
 | F-008 | No CloudWatch alerting for privileged actions | High | Open |
@@ -94,7 +94,7 @@
 
 ---
 
-### Finding F-005: No Private Subnet — All Resources in Public Network Tier
+### Finding F-005: No Network Segmentation — All Resources in Public Network Tier
 
 **Title:** VPC birthbff-dev-vpc contains only a public subnet; no network segmentation for database tier  
 **Asset:** VPC — birthbff-dev-vpc, Database tier  

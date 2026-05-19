@@ -2,7 +2,7 @@
 
 **Simulated AWS cloud security assessment for a HIPAA-aligned AI-powered childbirth education platform handling sensitive maternal health data.**
 
-In this project I step into the role of a Cloud Security (GRC) Analyst at BirthBFF, a planned AI-powered childbirth education application that processes sensitive maternal health data. I deploy and intentionally misconfigure an AWS environment tosimulate a neglected cloud environment with production-like security risks, then conduct a structured security assessment mapped to HIPAA, NIST SP 800-53 Rev. 5, and CIS AWS Foundations Benchmark v1.4.
+In this project I step into the role of a Cloud Security (GRC) Analyst at BirthBFF, a planned AI-powered childbirth education application that processes sensitive maternal health data. I deploy and intentionally misconfigure an AWS environment to simulate a neglected cloud environment with production-like security risks, then conduct a structured security assessment mapped to HIPAA, NIST SP 800-53 Rev. 5, and CIS AWS Foundations Benchmark v1.4.
 
 The environment includes IAM users with excessive privileges, a publicly accessible S3 bucket containing mock PHI-like patient data, overly permissive security groups, missing network segmentation, and gaps in logging and monitoring coverage. Each misconfiguration is documented as a formal audit finding with framework mappings, evidence screenshots, and remediation guidance.
 
@@ -126,7 +126,7 @@ In this phase I reviewed the EC2 instance configuration, attached security group
 
 **What I found:**
 
-The application server security group permitted unrestricted inbound SSH access from 0.0.0.0/0. Additional application ports were also publicly reachable as part of the simulated deployment.. The instance did have an IAM instance profile attached — a compliant control eliminating the need for long-term credentials on the instance. The overly permissive security group rules represented the primary finding for this tier.
+The application server security group permitted unrestricted inbound SSH access from 0.0.0.0/0. Additional application ports were also publicly reachable as part of the simulated deployment. The instance did have an IAM instance profile attached — a compliant control eliminating the need for long-term credentials on the instance. The overly permissive security group rules represented the primary finding for this tier.
 
 **Findings:** F-006 (High — shared with network assessment)
 

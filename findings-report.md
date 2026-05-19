@@ -31,7 +31,7 @@
 **Title:** IAM user birthbff-dev-admin has AdministratorAccess attached directly  
 **Asset:** IAM user — birthbff-dev-admin  
 **Description:** The IAM user birthbff-dev-admin has the AWS managed policy AdministratorAccess attached directly to the user account rather than via a role or group. This grants unrestricted access to all AWS services and resources. In a healthcare platform handling PHI-like data, this violates the principle of least privilege and creates excessive risk of unauthorized access, data exfiltration, or accidental resource destruction.  
-**Evidence:** `08-evidence/screenshots/01-iam/admin-user-administratoraccess-attached.png`  
+**Evidence:** `evidence/admin-user-administratoraccess-attached.png`  
 **Likelihood:** High  
 **Impact:** Critical  
 **Severity:** Critical  
@@ -48,7 +48,7 @@
 **Title:** IAM user birthbff-dev-developer has S3FullAccess and EC2FullAccess with unused programmatic credentials  
 **Asset:** IAM user — birthbff-dev-developer  
 **Description:** The developer IAM user has been granted full access to both S3 and EC2 via directly attached managed policies, exceeding the permissions required for typical development tasks. Additionally, programmatic access keys have been created but show no usage activity. Unused access keys with broad permissions represent a significant credential exposure risk — if the keys were exfiltrated, an attacker would have full access to all S3 data including PHI-like patient records.  
-**Evidence:** `08-evidence/screenshots/01-iam/developer-user-excessive-permissions.png`, `developer-user-access-key-created.png`  
+**Evidence:** `evidence/developer-user-excessive-permissions.png`, `evidence/credential-report.csv`  
 **Likelihood:** Medium  
 **Impact:** High  
 **Severity:** High  
@@ -65,7 +65,7 @@
 **Title:** No MFA device enrolled for any IAM user; no MFA enforcement policy exists  
 **Asset:** All IAM users — birthbff-dev-admin, birthbff-dev-developer, birthbff-dev-readonly  
 **Description:** The IAM credential report confirms that no MFA devices are enrolled for any IAM user in the BirthBFF environment. Additionally, no IAM policy exists requiring MFA before API or console access is granted. This means that compromised credentials alone (via phishing, credential stuffing, or key exposure) would grant an attacker full access to the platform. For a healthcare platform, MFA is a baseline control under HIPAA workforce access requirements.  
-**Evidence:** `08-evidence/screenshots/01-iam/credential-report-download.png` (mfa_active column shows false for all users), `no-mfa-enforcement-policy.png`  
+**Evidence:** `evidence/credential-report-download.png` (mfa_active column shows false for all users), `evidence/no-mfa-enforcement-policy.png`  
 **Likelihood:** High  
 **Impact:** High  
 **Severity:** High  
@@ -82,7 +82,7 @@
 **Title:** S3 bucket birthbff-dev-patient-documents is publicly readable and contains unencrypted mock PHI-like data  
 **Asset:** S3 bucket — birthbff-dev-patient-documents  
 **Description:** The S3 bucket used for BirthBFF patient document storage has Block Public Access disabled and a bucket policy granting s3:GetObject to Principal: * (all unauthenticated users). A mock patient intake CSV containing names, dates of birth, due dates, and clinical conditions was confirmed accessible via unauthenticated HTTP request using the object's public URL. In a production environment, this configuration would constitute an unauthorized disclosure of Protected Health Information under HIPAA, potentially triggering mandatory breach notification under the HIPAA Breach Notification Rule (45 CFR Part 164, Subpart D).  
-**Evidence:** `08-evidence/screenshots/03-s3/s3-bucket-publicly-accessible-banner.png`, `s3-bucket-policy-public-read.png`, `s3-object-public-url-accessible.png`  
+**Evidence:** `evidence/s3-bucket-public-access-enabled.png`, `evidence/s3-bucket-policy-public-read.png`, `evidence/s3-mock-phi-file-uploaded.png`, `evidence/s3-object-public-url-accessible.png`  
 **Likelihood:** High  
 **Impact:** Critical  
 **Severity:** Critical  
@@ -99,7 +99,7 @@
 **Title:** VPC birthbff-dev-vpc contains only a public subnet; no network segmentation for database tier  
 **Asset:** VPC — birthbff-dev-vpc, Database tier  
 **Description:** The BirthBFF VPC is configured with a single public subnet (10.0.1.0/24) and no private subnet. In a multi-tier application architecture handling sensitive health data, the database and application layers should be separated into private subnets with no direct internet routing. The absence of a private subnet means any future database deployment would be on the same network tier as the public-facing application server, increasing the blast radius of a network compromise.  
-**Evidence:** `08-evidence/screenshots/02-vpc/vpc-public-subnet-only.png`  
+**Evidence:** `evidence/vpc-public-subnet-only.png`  
 **Likelihood:** Medium  
 **Impact:** High  
 **Severity:** High  
@@ -116,7 +116,7 @@
 **Title:** Security group birthbff-dev-app-sg permits inbound SSH (port 22) from 0.0.0.0/0  
 **Asset:** EC2 security group — birthbff-dev-app-sg; EC2 instance — birthbff-dev-app-server  
 **Description:** The application server security group permits inbound SSH connections from any IP address on the public internet (0.0.0.0/0). This exposes the server to brute-force attacks, credential stuffing, and exploitation of any SSH daemon vulnerabilities. For a healthcare platform, unrestricted administrative access to application servers represents a direct risk to the confidentiality and integrity of PHI-like data processed by the platform.  
-**Evidence:** `08-evidence/screenshots/02-vpc/app-sg-ssh-open-to-world.png`, `08-evidence/screenshots/04-ec2/ec2-security-group-attached.png`  
+**Evidence:** `evidence/app-sg-ssh-open-to-world.png`, `evidence/ec2-security-group-attached.png`  
 **Likelihood:** High  
 **Impact:** High  
 **Severity:** High  
@@ -133,7 +133,7 @@
 **Title:** Security group birthbff-dev-db-sg permits inbound MySQL (port 3306) from 0.0.0.0/0  
 **Asset:** Security group — birthbff-dev-db-sg  
 **Description:** The database tier security group is pre-configured to allow inbound MySQL connections from any IP address. While no RDS instance is currently deployed, this security group is staged for use with the planned database layer. Deploying any RDS instance with this security group would immediately expose the database to internet-accessible brute force and injection attacks. Patient records, birth plans, and health data stored in the database would be at risk.  
-**Evidence:** `08-evidence/screenshots/02-vpc/db-sg-mysql-open-to-world.png`  
+**Evidence:** `evidence/db-sg-mysql-open-to-world.png`  
 **Likelihood:** Medium (no active database) → High (upon RDS deployment)  
 **Impact:** Critical  
 **Severity:** High  
@@ -150,7 +150,7 @@
 **Title:** No CloudWatch alarms configured for IAM policy changes, S3 public access changes, or root account usage  
 **Asset:** CloudWatch, CloudTrail  
 **Description:** While CloudTrail captures API activity, no CloudWatch metric filters or alarms are configured to alert on high-risk events including: root account login, IAM policy changes, S3 bucket policy modifications, console authentication failures, or security group changes. Without alerting, a security incident could occur and remain undetected for an extended period. HIPAA requires the ability to detect and respond to security incidents, which requires active monitoring, not just passive logging.  
-**Evidence:** `08-evidence/screenshots/05-cloudtrail/cloudtrail-no-cloudwatch-integration.png`  
+**Evidence:** `evidence/cloudtrail-no-cloudwatch-integration.png`  
 **Likelihood:** High  
 **Impact:** High  
 **Severity:** High  
@@ -179,13 +179,12 @@
 
 ---
 
-
 ### Finding F-010: S3 Bucket Uses AWS-Managed Encryption Instead of Customer-Managed KMS Key
 
 **Title:** S3 bucket birthbff-dev-patient-documents uses SSE-S3 (AWS-managed) encryption rather than SSE-KMS with a customer-managed key  
 **Asset:** S3 bucket — birthbff-dev-patient-documents  
 **Description:** The birthbff-dev-patient-documents bucket uses default SSE-S3 encryption (AES-256) with AWS-managed keys. While SSE-S3 provides baseline encryption at rest, it does not satisfy HIPAA requirements for covered entities handling ePHI at the level of control required. SSE-S3 uses AWS-managed keys where the organization has no visibility into key usage, cannot audit key access events, and cannot revoke key access in response to a security incident. NIST SP 800-53 SC-12 requires that organizations establish and manage cryptographic keys for required cryptography employed within the information system. Customer-managed KMS keys (CMKs) provide key usage logs in CloudTrail, enabling the organization to audit every decrypt operation against patient data.  
-**Evidence:** 08-evidence/screenshots/03-s3/s3-encryption-sse-s3-default.png  
+**Evidence:** `evidence/s3-encryption-sse-s3-default.png`  
 **Likelihood:** Medium  
 **Impact:** High  
 **Severity:** Medium  
@@ -193,7 +192,7 @@
 **HIPAA Security Rule:** §164.312(a)(2)(iv) — Encryption and Decryption; §164.312(e)(2)(ii) — Encryption of ePHI in Transit and at Rest; §164.308(a)(1)(ii)(B) — Risk Management  
 **CIS AWS Benchmark:** 2.1.1 — Ensure all S3 buckets employ encryption-at-rest; 3.7 — Ensure CloudTrail logs are encrypted at rest using KMS CMKs (same control principle applied to data storage)  
 **Recommended Remediation:** Create a customer-managed KMS key named birthbff-cmk-phi with key rotation enabled (annual minimum). Update the bucket default encryption to SSE-KMS using the CMK. Apply a bucket policy denying any PutObject request that does not include the SSE-KMS encryption header, preventing unencrypted uploads. Confirm CloudTrail captures KMS key usage events for audit purposes.  
-**Status:** Open  
+**Status:** Open
 
 ---
 
@@ -202,7 +201,7 @@
 **Title:** VPC birthbff-dev-vpc has no flow logs configured; network traffic to and from resources processing ePHI is not captured  
 **Asset:** VPC — birthbff-dev-vpc  
 **Description:** VPC Flow Logs are not enabled for birthbff-dev-vpc. Flow logs provide a record of IP traffic to and from network interfaces within the VPC, including source and destination IPs, ports, protocols, and allow/deny decisions. Without flow logs, there is no audit trail for network-level activity, no ability to investigate the scope of a potential data exfiltration event, and no mechanism to detect unusual traffic patterns such as unexpected outbound connections from the application server or repeated connection attempts to the database tier. For a platform processing maternal health data, network visibility is a foundational detective control required under HIPAA's Security Incident Procedures standard.  
-**Evidence:** 08-evidence/screenshots/02-vpc/vpc-flow-logs-not-enabled.png  
+**Evidence:** `evidence/vpc-flow-logs-not-enabled.png`  
 **Likelihood:** High  
 **Impact:** High  
 **Severity:** High  
@@ -210,5 +209,4 @@
 **HIPAA Security Rule:** §164.312(b) — Audit Controls; §164.308(a)(1)(ii)(D) — Information System Activity Review; §164.308(a)(6)(ii) — Response and Reporting  
 **CIS AWS Benchmark:** 3.9 — Ensure VPC flow logging is enabled in all VPCs  
 **Recommended Remediation:** Enable VPC Flow Logs on birthbff-dev-vpc capturing ALL traffic (Accept and Reject). Deliver logs to a dedicated CloudWatch Log Group or S3 bucket separate from application logs. Encrypt the log destination using the birthbff-cmk-phi KMS key. Set a retention period of 365 days minimum to support HIPAA audit requirements. Consider creating a CloudWatch metric filter to alert on high volumes of REJECT traffic, which may indicate reconnaissance activity.  
-**Status:** Open  
-
+**Status:** Open

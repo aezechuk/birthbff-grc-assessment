@@ -1,4 +1,7 @@
 # BirthBFF NIST-HIPAA Scoped Crosswalk
+## Purpose
+
+This document maps BirthBFF cloud security assessment findings to applicable HIPAA Security Rule safeguards and associated NIST SP 800-53 Rev. 5 controls using NIST SP 800-66 Rev. 2 guidance. The crosswalk demonstrates how identified cloud security weaknesses may impact regulatory, governance, and operational security requirements within a healthcare-aligned environment.
 
 > Framework mapping based on NIST SP 800-66 Rev. 2 — *Implementing the HIPAA Security Rule: A Cybersecurity Resource Guide* (NIST, February 2023).
 > Scoped to HIPAA Security Rule requirements implicated by findings from the BirthBFF AWS Cloud Security and GRC Assessment.
@@ -34,7 +37,7 @@
 Unique identifiers exist but the verification chain is broken. Unused programmatic keys with no MFA mean activity cannot be reliably attributed to a specific user.
 
 ### §164.312(a)(2)(iv) — Encryption and Decryption
-Addressable. Determined applicable given PHI-like maternal health data processed in a cloud environment. Encryption of ePHI at rest is effectively required for this organization.
+Addressable. Determined applicable given PHI-like maternal health data processed in a cloud environment. Given the sensitivity of maternal health data and the cloud-hosted architecture, encryption in transit and at rest were determined to be necessary safeguards for this environment.
 
 ### §164.312(b) — Audit Controls
 F-011 (AU-2, AU-12): no VPC flow logs means a category of activity in a system containing ePHI is not being recorded at all. That is a direct audit controls gap. F-008 (AU-6, SI-4): CloudTrail satisfies the logging requirement but the absence of CloudWatch integration means logs are not being reviewed or acted on. More of an audit review gap than an audit controls gap.
@@ -49,7 +52,7 @@ Unrestricted SSH and MySQL access expose transmission channels. Absence of a pri
 Addressable. Determined applicable. ePHI is transmitted between users and platform systems and stored for ongoing access. Encryption in transit and at rest is effectively required given the sensitivity of maternal health data and the cloud-based architecture.
 
 ### §164.308(a)(1) — Security Management Process
-No formal security management program exists. IAM misconfigurations (no MFA, root account in use, unused access keys) indicate an absence of preventive policies and enforcement procedures. No data classification policy exists to define handling requirements for ePHI. No CloudWatch alerting is in place to detect, contain, and correct violations in a timely manner.
+No formal security management program exists. IAM misconfigurations (no MFA, unused access keys) indicate an absence of preventive policies and enforcement procedures. No data classification policy exists to define handling requirements for ePHI. No CloudWatch alerting is in place to detect, contain, and correct violations in a timely manner.
 
 ### §164.308(a)(1)(ii)(A) — Risk Analysis
 No formal risk analysis process exists. This assessment surfaced 11 findings including a critically misconfigured public S3 bucket containing PHI-like data that a formal ongoing risk analysis program would have identified and remediated earlier.
